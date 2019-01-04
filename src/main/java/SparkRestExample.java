@@ -7,11 +7,12 @@ public class SparkRestExample {
     public static void main(String[] args){
         UserServiceImple userService = new UserServiceImple();
         //add a user
-        post("/user", (request, reponse) ->{
-            reponse.type("application/json");
+        post("/user", (request, response) ->{
+
+            response.type("application/json");
             User user = new Gson().fromJson(request.body(), User.class);
             userService.addUser(user);
-            return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS));
+            return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, new Gson().toJson(user)));
         });
         //get all user
         get("/user", (request, response) -> {
@@ -28,9 +29,10 @@ public class SparkRestExample {
                 return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, new Gson().toJsonTree(user)));
             }
         });
-        put("/users/:id", (request, response)->{
+        put("/user/:id", (request, response)->{
             response.type("application/json");
             User toEdit = new Gson().fromJson(request.body(), User.class);
+            toEdit.setId(request.params(":id"));
             User editedUser  = userService.editUser(toEdit);
             if(editedUser != null){
                 return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, new Gson().toJsonTree(editedUser)));
@@ -39,6 +41,17 @@ public class SparkRestExample {
             }
 
         });
+        delete("/user/:id", (request, response)->{
+            response.type("application/json");
+            userService.deleteUser(request.params(":id"));
+            return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, "user has been deleted"));
+        });
+        options("/user/:id", (request, response)->{
+            response.type("application/json");
+            return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, userService.userExist(request.params(":id"))?"User exists!":"User doesn't exist!"));
+            }
+        );
+        
 
 
 
