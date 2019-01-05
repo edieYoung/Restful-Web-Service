@@ -35,7 +35,7 @@ public class SparkRestExample {
             toEdit.setId(request.params(":id"));
             User editedUser  = userService.editUser(toEdit);
             if(editedUser != null){
-                return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, new Gson().toJsonTree(editedUser)));
+                return new Gson().toJson(new StandardResponse(StatusResponse.SUCESS, new Gson().toJson(editedUser)));
             }else{
                 return new Gson().toJson(new StandardResponse(StatusResponse.ERROR, new Gson().toJson("User not found or error in edit")));
             }
